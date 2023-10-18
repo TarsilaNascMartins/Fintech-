@@ -1,0 +1,61 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class TesteView {
+    public static void main(String[] args) {
+        try {
+            // Registra o Driver
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+
+            // Abre uma conexão
+            Connection conexao = DriverManager.getConnection("jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL", "RM98328", "210598");
+            System.out.println("Conectado!");
+
+            // Preparar a consulta SQL
+            String sql = "SELECT * FROM t_gasto WHERE cd_gasto = ?";
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+            stmt.setInt(1, 1); // Substitua o valor 1 pelo ID do gasto que deseja consultar.
+
+            ResultSet result = stmt.executeQuery();
+
+            // Percorre todos os registros encontrados
+            while (result.next()) {
+                // Recupera os valores de cada coluna
+                int codigoGasto = result.getInt("cd_gasto");
+                String tipoDespesa = result.getString("tp_despesa");
+                int codigoMovimentacao = result.getInt("cd_movimentacao");
+                int codigoExtrato = result.getInt("cd_extrato");
+                String nomeMovimentacao = result.getString("nm_movimentacao");
+                String descricaoMovimentacao = result.getString("ds_movimentacao");
+                double valorMovimentacao = result.getDouble("vl_movimentacao");
+                java.sql.Date dataMovimentacao = result.getDate("dt_movimentacao");
+                int quantidadeParcelas = result.getInt("qtd_parcelas");
+
+                // Exibe as informações do registro
+                System.out.println("Código do Gasto: " + codigoGasto);
+                System.out.println("Tipo de Despesa: " + tipoDespesa);
+                System.out.println("Código da Movimentação: " + codigoMovimentacao);
+                System.out.println("Código do Extrato: " + codigoExtrato);
+                System.out.println("Nome da Movimentação: " + nomeMovimentacao);
+                System.out.println("Descrição da Movimentação: " + descricaoMovimentacao);
+                System.out.println("Valor da Movimentação: " + valorMovimentacao);
+                System.out.println("Data da Movimentação: " + dataMovimentacao);
+                System.out.println("Quantidade de Parcelas: " + quantidadeParcelas);
+            }
+
+            // Fecha a conexão
+            conexao.close();
+
+        } catch (SQLException e) {
+            System.err.println("Não foi possível conectar no Banco de Dados");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("O Driver JDBC não foi encontrado!");
+            e.printStackTrace();
+        }
+    }
+}
+
